@@ -111,6 +111,69 @@ You may need to wrap the column name in quotes (<code>""</code>) if it contains 
 </br>
 </details>
 
+## How It Works
+Snapscore increases by a point under one of the following conditions:
+- you opened a snap (+1)
+- your snap was opened by someone else (+1)
+- you posted on your story (+UNKNOWN)
+
+Usually, a Snapscore increase of 2 means the person sent and received a snap; similarly, an increase of 16 means the user sent and received 8 snaps. This calculation does not show the number of people the person has snapped but indicates the *maximum* number of people they could have snapped, which is `increase // 2`. So, a Snapscore increase of 16 implies the maximum number of people they've snapped is 8.
+
+If the increase value is even, the number of snaps sent and opened is the same. For example, with an increase of 16, `16 // 2` yields 8 for both snaps sent and received. However, for an odd Snapscore increase, such as 17, the formula `17 // 2` yields 8. Applying this to both snaps sent and opened gives a total of 16, missing one value. 
+<details close>
+<summary>✅ Even Snapscore Increase</summary>
+<br>
+  <pre>
+    Previous Snapscore: 40,000
+    Current Snapscore: 40,004
+    Increase: +4
+    Snaps Sent: Increase // 2 = 4 // 2 = 2
+    Snaps Opened: Increase // 2 = 4 // 2 = 2
+    Increase = Snaps Sent + Snaps Opened = 4 ✅</pre>
+</br>
+</details>
+
+<details close>
+<summary>❌ Odd Snapscore Increase</summary>
+<br>
+  <pre>
+    Previous Snapscore: 40,000
+    Current Snapscore: 40,005
+    Increase: +5
+    Snaps Sent: Increase // 2 = 5 // 2 = 2
+    Snaps Opened: Increase // 2 = 5 // 2 = 2
+    Increase = Snaps Sent + Snaps Opened = 4 ❌ (sum of Snaps Sent and Snaps Opened should yield 5)</pre>
+</br>
+</details>
+
+To address this, a new formula is used for `Snaps Opened`: `(increase // 2) + (increase % 2)`. If the increase is even, `increase % 2` is 0, so it doesn't change the result of `increase // 2`, yielding the same value for snaps sent and received. If the increase is odd, `increase % 2` will add the remainder to the floor-divided value.
+
+<details close>
+<summary>✅ Modified Formula: Even Snapscore Increase</summary>
+<br>
+  <pre>
+    Previous Snapscore: 40,000
+    Current Snapscore: 40,004
+    Increase: +4
+    Snaps Sent: Increase // 2 = 4 // 2 = 2
+    Snaps Opened: (Increase // 2) + (Increase % 2) = (4 // 2) + (4 % 2) = 2 + 0 = 2
+    Increase = Snaps Sent + Snaps Opened = 4 ✅</pre>
+</br>
+</details>
+
+<details close>
+<summary>✅ Modified Formula: Odd Snapscore Increase</summary>
+<br>
+  <pre>
+    Previous Snapscore: 40,000
+    Current Snapscore: 40,005
+    Increase: +5
+    Snaps Sent: Increase // 2 = 5 // 2 = 2
+    Snaps Opened: (Increase // 2) + (Increase % 2) = (5 // 2) + (5 % 2) = 2 + 1 = 3
+    Increase = Snaps Sent + Snaps Opened = 5 ✅</pre>
+</br>
+</details>
+
 ## Built With
 - [Python](https://www.python.org/)
 - [Numpy](https://numpy.org/)
