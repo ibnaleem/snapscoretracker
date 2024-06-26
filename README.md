@@ -11,6 +11,7 @@
     <br />
     <br />
     <a href="https://github.com/ibnaleem/snapscoretracker/issues">Report Bugs</a>
+    <a href="#Troubleshooting">Troubleshooting</a>
   </p>
 </div>
 
@@ -173,6 +174,28 @@ To address this, a new formula is used for `Snaps Opened`: `(increase // 2) + (i
     Increase = Snaps Sent + Snaps Opened = 5 ✅</pre>
 </br>
 </details>
+
+## Troubleshooting
+#### 1. ModuleNotFoundError: No module named '{module name}'
+You did not install the dependencies: 
+```
+pip/pip3 install -r requirements.txt
+```
+#### 2. error: externally-managed-environment
+As per [PEP 668](https://peps.python.org/pep-0668/), "Python-specific package management tools should neither install nor remove packages into the interpreter’s global context, by default, and should instead guide the end user towards using a virtual environment" (Thomas et al.). Therefore, you must create a Python virtual environment to install Python packages so it does not conflict with global packages installed on the OS.
+```
+$ python/python3 -m venv ~/myvenv
+$ source ~/myvenv/bin/activate
+(myvenv) $ pip/pip3 install -r requirements.txt
+```
+#### 3. Date is 1 hour behind
+This is due to daylight savings, sometimes `datetime.datetime.utcnow()` reports a time one hour earlier than the current time. To mitigate this, manually type the datetime in `%Y-%m-%d %HH-%MM-%SS` format.
+
+For example, if you want to log for 26/06/26 @ 21:13 (that's 09:30PM):
+```
+python3 main.py -u {username} -s {snapscore} -t "2024-06-26 21:13:00"
+```
+Indeed, you must use 24-hour time.
 
 ## Built With
 - [Python](https://www.python.org/)
